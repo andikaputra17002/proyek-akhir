@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Dokter;
+use App\Models\pendaftaran;
+use App\Observers\DokterObserver;
+use App\Observers\PendaftaranObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -27,6 +31,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Dokter::observe(DokterObserver::class);
+        pendaftaran::observe(PendaftaranObserver::class);
     }
 }

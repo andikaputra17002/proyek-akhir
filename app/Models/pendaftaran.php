@@ -25,7 +25,7 @@ class pendaftaran extends Model
 
     public function dokter()
     {
-        return $this->belongsTo(Dokter::class);
+        return $this->belongsTo(Dokter::class, 'dokter_id', 'id');
     }
 
     public function jam_praktek()

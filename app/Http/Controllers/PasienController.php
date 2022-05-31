@@ -54,12 +54,12 @@ class PasienController extends Controller
     {
         $rule = [
             'name' => 'required',
-            // 'email' => 'required|unique:users,email',
-            // 'password' =>'required',
+             'email' => 'required|unique:users,email',
+             'password' =>'required',
             'alamat' => 'required',
             'jenis_kelamin' => 'required',
             'no_tlp' => 'required',
-    
+
         ];
         $text = [
             'name.required' => 'Kolom nama tidak boleh kosong',
@@ -86,13 +86,13 @@ class PasienController extends Controller
             'jenis_kelamin' => $request->jenis_kelamin,
             'no_tlp' => $request->no_tlp,
         ];
-         
-        $datas = User::updateOrCreate(['id' => $Id], $data);  
+
+        $datas = User::updateOrCreate(['id' => $Id], $data);
         if ($datas) {
             return response()->json(['status' => 'Data Berhasil Disimpan', 200]);
         } else {
             return response()->json(['text' => 'Data Gagal Disimpan', 422]);
-        } 
+        }
         // return response()->json([
         //     	'status' => 200,$datas
         // ]);
@@ -147,9 +147,9 @@ class PasienController extends Controller
         // return response()->json([
 		// 	'status' => 200,
 		// ]);
-        
+
         $user = User::where('id',$id)->delete();
-     
+
         return response()->json($user);
     }
 }

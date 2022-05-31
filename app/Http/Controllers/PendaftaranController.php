@@ -26,7 +26,7 @@ class PendaftaranController extends Controller
         $data = pendaftaran::query();
         if ($request->fildok != null) {
             $data = $data->where('dokter_id', $request->get('fildok'));
-        } 
+        }
         if ($request->filjam != null) {
             $data = $data->where('jam_praktek_id', $request->get('filjam'));
         }
@@ -49,9 +49,9 @@ class PendaftaranController extends Controller
                 ->rawColumns(['aksi'])
                 ->addIndexColumn()
                 ->make(true);
-                // 
+                //
         }
-        
+
         return view('datapendaftaran.index',compact('pasien','dokter', 'jampraktek'));
     }
 
@@ -103,7 +103,7 @@ class PendaftaranController extends Controller
             'tanggal_pendaftaran' => 'required',
             'jam_praktek' => 'required',
             'transaksi' => 'required',
-    
+
         ];
         $text = [
             'name.required' => 'Kolom nama tidak boleh kosong',
@@ -117,7 +117,7 @@ class PendaftaranController extends Controller
             return response()->json(['status' => 0, 'text' => $validasi->errors()->first()], 422);
         }
 
-        
+
         $datas = new pendaftaran();
         // $dokter = pendaftaran::max('antrian');
         //     if (!$dokter) {
@@ -146,9 +146,9 @@ class PendaftaranController extends Controller
             'transaksi' => $request->transaksi,
             'antrian' => $this->getNoAntrian(),
         ];
-         
-        $datas = pendaftaran::updateOrCreate(['id' => $Id], $data);  
-        // ddd($datas); 
+
+        $datas = pendaftaran::updateOrCreate(['id' => $Id], $data);
+        // ddd($datas);
         if ($datas) {
             return response()->json(['status' => 'Data Berhasil Disimpan', 200]);
         } else {

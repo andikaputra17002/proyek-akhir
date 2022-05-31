@@ -17,10 +17,10 @@ class DokterController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    
+
      public function index()
     {
-        
+
         $datta = JamPraktek::all();
         // $dokter = Dokter::all();
         // $pilih = $dokter->pluck('jam_praktek')->toArray();
@@ -78,7 +78,7 @@ class DokterController extends Controller
         if ($validasi->fails()) {
             return response()->json(['status' => 0, 'text' => $validasi->errors()->first()], 422);
         }
-   
+
             $datas = new Dokter();
             $Id = $request->id;
             $data =[
@@ -89,31 +89,31 @@ class DokterController extends Controller
                 'hari_praktek' => implode(' , ' , $request->hari_praktek),
                 'jam_praktek_pagi' =>implode(' , ', $request->jam_praktek_pagi),
                 'jam_praktek_malam' =>implode(' , ', $request->jam_praktek_malam),
-    
+
             ];
             if ($files = $request->file('photo_dokter')) {
                 //delete old file
                 \File::delete('public/photo_dokter/'.$request->hidden_image);
-                
+
                 //insert new file
                 $destinationPath = 'public/photo_dokter/'; // upload path
                 $profileImage = time() . "." . $files->getClientOriginalExtension();
                 $files->move($destinationPath, $profileImage);
                 $data['photo_dokter'] = "$profileImage";
             }
-             
-            $datas = Dokter::updateOrCreate(['id' => $Id], $data); 
+
+            $datas = Dokter::updateOrCreate(['id' => $Id], $data);
             if ($datas) {
                 return response()->json(['status' => 'Data Berhasil Disimpan', 200]);
             } else {
                 return response()->json(['text' => 'Data Gagal Disimpan', 422]);
-            }  
+            }
             // $data = $data->save();
             // return response()->json([
             //         'status' => 200,$datas
             //         // 'code'=>1,$datas
             // ]);
-        
+
     }
 
     /**
@@ -155,7 +155,7 @@ class DokterController extends Controller
         // $dok->bidang_dokter = $request->bidang_dokter;
         // $dok->hari_praktek = implode(' , ' , $request->hari_praktek);
         // $dok->jam_praktek = implode(' , ', $request->jam_praktek);
-        
+
         // if($request->file('photo_dokter'))
         // {
         //     $dok['photo_dokter'] = $request->file('photo_dokter')->store('assets/user', 'public');

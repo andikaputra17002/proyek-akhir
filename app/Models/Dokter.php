@@ -17,11 +17,16 @@ class Dokter extends Model
         'hari_praktek',
         'jam_praktek_pagi',
         'jam_praktek_malam',
+        'code',
     ];
 
     // public function jam_praktek()
     // {
     //     return $this->hasMany(JamPraktek::class);
     // }
+
+    public function pendaftaran(){
+        return $this->hasMany(pendaftaran::class, 'dokter_id', 'id');
+    }
 
 }
