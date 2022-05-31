@@ -15,7 +15,13 @@ class Dokter extends Model
         'photo_dokter',
         'bidang_dokter',
         'hari_praktek',
-        'jam_praktek',
+        'jam_praktek_pagi',
+        'jam_praktek_malam',
     ];
+
+    // public function jam_praktek()
+    // {
+    //     return $this->hasMany(JamPraktek::class);
+    // }
 
 }

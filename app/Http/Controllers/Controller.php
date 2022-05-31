@@ -9,7 +9,7 @@ use Illuminate\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
-    const KLINIK_BUKA = 1;
-    const KLINIK_TUTUP = 0;
+    // const KLINIK_BUKA = 1;
+    // const KLINIK_TUTUP = 0;
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 }

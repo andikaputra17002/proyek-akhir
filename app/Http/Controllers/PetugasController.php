@@ -5,11 +5,8 @@ namespace App\Http\Controllers;
 use datatables;
 use App\Models\User;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
-// use Illuminate\Support\Facades\Storage;
-// use Illuminate\Support\Facades\Validator;
-// use File;
+use Illuminate\Support\Facades\Validator;
 
 class PetugasController extends Controller
 
@@ -57,9 +54,31 @@ class PetugasController extends Controller
     {
         // ddd($request);
 
-        request()->validate([
+        $rule = [
+            'name' => 'required',
+            'email' => 'required|unique:users,email',
+            'password' =>'required',
+            'alamat' => 'required',
+            'roles' =>'required',
+            'jenis_kelamin' => 'required',
+            'no_tlp' => 'required',
             'photoProfile' => 'image|mimes:jpeg,png,jpg|max:2048',
-        ]);
+        ];
+        $text = [
+            'name.required' => 'Kolom nama tidak boleh kosong',
+            'email.required' => 'Kolom email tidak boleh kosong',
+            'email.unique' => 'Email sudah terdaftar',
+            'password.required' => 'Kolom password tidak boleh kosong',
+            'alamat.required' => 'Kolom alamat tidak boleh kosong',
+            'roles.required' => 'Kolom roles tidak boleh kosong',
+            'jenis_kelamin.required' => 'Kolom janis kelamin tidak boleh kosong',
+            'no_tlp.required' => 'Kolom nomor telepon tidak boleh kosong'
+        ];
+
+        $validasi = Validator::make($request->all(), $rule, $text);
+        if ($validasi->fails()) {
+            return response()->json(['status' => 0, 'text' => $validasi->errors()->first()], 422);
+        }
 
         $datas = new User();
         $Id = $request->id;
@@ -71,10 +90,9 @@ class PetugasController extends Controller
             'roles' => $request->roles,
             'jenis_kelamin' => $request->jenis_kelamin,
             'no_tlp' => $request->no_tlp,
-            // 'photoProfile' => $file_name,
+            
         ];
         if ($files = $request->file('photoProfile')) {
-            // $data['photoProfile'] = $request->file('photoProfile')->store('files', 'public');
             //delete old file
             \File::delete('public/files/'.$request->hidden_image);
             
@@ -85,11 +103,16 @@ class PetugasController extends Controller
             $data['photoProfile'] = "$profileImage";
         }
          
-        $datas = User::updateOrCreate(['id' => $Id], $data);  
+        $datas = User::updateOrCreate(['id' => $Id], $data); 
+        if ($datas) {
+            return response()->json(['status' => 'Data Berhasil Disimpan', 200]);
+        } else {
+            return response()->json(['text' => 'Data Gagal Disimpan', 422]);
+        } 
         // $data = $data->save();
-        return response()->json([
-            	'status' => 200,$datas
-        ]);
+        // return response()->json([
+        //     	'status' => 200,$datas
+        // ]);
     }
 
     /**

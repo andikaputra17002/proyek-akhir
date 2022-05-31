@@ -23,7 +23,8 @@
                         data-bs-target="#exampleModal">
                         Tambah Data
                     </button>
-                    <table class="table zero-configuration text-center" id="datatabledokter">
+                    <table class="table zero-configuration text-center dt-responsive" cellspacing="0"
+                        id="datatabledokter">
                         <thead>
                             <tr class="">
                                 <th></th>
@@ -31,7 +32,8 @@
                                 <th>Nama Dokter</th>
                                 <th>Bidang Dokter</th>
                                 <th>Hari Praktek Dokter</th>
-                                <th>Jam Praktek Dokter</th>
+                                <th>Jam Pagi Praktek Dokter</th>
+                                <th>Jam Malam Praktek Dokter</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -41,8 +43,7 @@
 
                 <!-- add new sidebar starts -->
 
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true">
+                <div class="modal fade" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog ">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -57,20 +58,22 @@
                                     @csrf
                                     <div class="col-sm-12 data-field-col">
                                         <label for="data-name">Nama Dokter</label>
-                                        <input type="text" class="form-control" id="nama_dokter" name="nama_dokter">
+                                        <input type="text" class="form-control" id="nama_dokter" name="nama_dokter"
+                                            placeholder="Masukkan Nama Dokter">
                                         <span class="text-danger error-text nama_dokter_error"></span>
                                         <input type="hidden" id="id" name="id">
                                     </div>
                                     <div class="col-sm-12 data-field-col">
                                         <label for="data-name">Bidang Dokter</label>
-                                        <input type="text" class="form-control" name="bidang_dokter" id="bidang_dokter">
+                                        <input type="text" class="form-control" name="bidang_dokter" id="bidang_dokter"
+                                            placeholder="Masukkan Bidang Dokter">
                                         <span class="text-danger error-text bidang_dokter_error"></span>
                                     </div>
                                     <div class="col-sm-12 data-field-col">
                                         <label for="data-status">Hari Praktek Dokter</label>
                                         <select class="form-control select" id="hari_praktek" name="hari_praktek[]"
                                             multiple="multiple">
-                                            {{-- <option value="">Pilih Hari</option> --}}
+                                            <option value="">Pilih Hari</option>
                                             <option value="senin">Senin</option>
                                             <option value="selasa">Selasa</option>
                                             <option value="rabu">Rabu</option>
@@ -81,10 +84,21 @@
                                         </select>
                                     </div>
                                     <div class="col-sm-12 data-field-col">
-                                        <label for="data-status">Jam Praktek Dokter</label>
-                                        <select class="form-controll mul-select" multiple="multiple" id="jam_praktek"
-                                            name="jam_praktek[]">
+                                        <label for="data-status">Jam Praktek Dokter Pagi</label>
+                                        <select class="form-controll mul-select" multiple="multiple"
+                                            id="jam_praktek_pagi" name="jam_praktek_pagi[]">
                                             @foreach ($datta as $data)
+                                            {{-- <option value="">Pilih Jam Praktek</option> --}}
+                                            <option value="{{ $data->jam_praktek }}">{{ $data->jam_praktek }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-12 data-field-col">
+                                        <label for="data-status">Jam Praktek Dokter Malam</label>
+                                        <select class="form-controll mul-select" multiple="multiple"
+                                            id="jam_praktek_malam" name="jam_praktek_malam[]">
+                                            @foreach ($datta as $data)
+                                            {{-- <option value="">Pilih Jam Praktek</option> --}}
                                             <option value="{{ $data->jam_praktek }}">{{ $data->jam_praktek }}</option>
                                             @endforeach
                                         </select>
@@ -92,10 +106,11 @@
                                     <div class="col-sm-12 data-field-col data-list-upload">
                                         <label for="basicInputFile">Upload Image</label>
                                         <input type="file" class="form-control-file" id="photo_dokter"
-                                            name="photo_dokter" onchange="readURL(this);">
+                                            accept="photo_dokter/*" name="photo_dokter" onchange="readURL(this);">
+                                        <input type="hidden" name="hidden_image" id="hidden_image">
                                     </div>
                                     <img id="modal-preview" src="https://via.placeholder.com/150" alt="Preview"
-                                        class="form-group hidden mt-1" width="100" height="100">
+                                        class="form-group mt-1 ml-2" width="100" height="100">
                                     <div class="modal-footer">
                                         <div class="add-data-footer d-flex justify-content-around pl-5 mt-2">
                                             <div class="add-data-btn px-1">
@@ -120,10 +135,12 @@
 <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js'></script>
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.11.5/datatables.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 <script>
     $(document).ready(function(){
       $(".mul-select").select2({
+        placeholder: "Pilih Jam Praktek Dokter",
             tags: true,
             tokenSeparators: ["/", ",", ";", " "],
             width: "100%"
@@ -134,7 +151,7 @@
 <script>
     $(document).ready(function(){
       $(".select").select2({
-        // placeholder: "Pilih Jam Praktek Dokter",
+        placeholder: "Pilih Hari Praktek Dokter",
         tags: true,
         tokenSeparators: ["/", ",", ";", " "],
         width: "100%"
@@ -151,27 +168,27 @@
             });
     });
     $('#datatabledokter').DataTable({
-           
-           serverside : true,
-           responsive : true,
+            serverSide : true,
+            responsive : true,
+            processing: true,
            ajax : {
                url : "{{route('dokter.index')}}"
            },
            columns:[
-                   {
-                       "data" :null, "sortable": false,
-                       render : function (data, type, row, meta) {
-                           return meta.row + meta.settings._iDisplayStart + 1
-                       }
-                   },
+                   { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                    {data: 'photo_dokter', name: 'photo_dokter'},
                    {data: 'nama_dokter', name: 'nama_dokter'},
                    {data: 'bidang_dokter', name: 'bidang_dokter'},
                    {data: 'hari_praktek', name: 'hari_praktek'},
-                   {data: 'jam_praktek', name: 'jam_praktek'},
+                   {data: 'jam_praktek_pagi', name: 'jam_praktek_pagi'},
+                   {data: 'jam_praktek_malam', name: 'jam_praktek_malam'},
                    {data: 'aksi', name: 'aksi'}
-               ]
+               ],
+               order: [
+                    [0, 'asc']
+                ]
        })
+       
 
        function readURL(input, id) {
         id = id || '#modal-preview';
@@ -203,42 +220,28 @@
                         $(formData).find('span.error-text').text('');
                 },
                 success: function(response) {
-                    if(response.status == 400){
-                            $.each(response.errors, function(prefix,val){
-                                $(formData).find("span."+prefix+'_error').text(val[0]);
-                            });
-                    }
-                    else {
-                        // Swal.fire(
-                        //     'Added!',
-                        //     'Dokter Added Successfully!',
-                        //     'success'
-                        //     ),
-                        //     $('#formdokter')[0].reset()
-                        //     $('#formdokter').trigger("reset"); //form reset
-                        //     $('#tutup').trigger("reset"); //form reset
-                        //     $('#exampleModal').modal('hide'); //modal hide
-                        //     $('#datatabledokter').DataTable().ajax.reload()
-                    }
+                        Swal.fire(
+                            'Added!',
+                            'Dokter Added Successfully!',
+                            'success'
+                            ),
+                            $('#formdokter')[0].reset()
+                            $('#formdokter').trigger("reset"); //form reset
+                            $('#tutup').trigger("reset"); //form reset
+                            $('#exampleModal').modal('hide'); //modal hide
+                            $('#datatabledokter').DataTable().ajax.reload()
+                    // console.log(response);
+                },
+                error : function (xhr) {
+                    // console.log('gagal');
+                    toastr.error(xhr.responseJSON.text, "GAGAL")
+                } 
 
-                    console.log(response);
-                    // if (response.status == 200) {
-                    //     Swal.fire(
-                    //         'Added!',
-                    //         'Dokter Added Successfully!',
-                    //         'success'
-                    //         )}
-                    // // $('#tutup').click()
-                    // $('#formdokter')[0].reset()
-                    // $('#formdokter').trigger("reset"); //form reset
-                    // $('#tutup').trigger("reset"); //form reset
-                    // $('#exampleModal').modal('hide'); //modal hide
-                    // $('#datatabledokter').DataTable().ajax.reload()
-                }    
             })
         });
 
         // Edit
+        var SITEURL = '{{URL::to('')}}';
         $(document).on('click', '.edit', function (e) {
         e.preventDefault(); 
         $('#exampleModal').modal('show')
@@ -246,7 +249,6 @@
         $('#modal-judul').html("Edit Data Dokter"); // Judul
         $('#tutup').trigger("reset");
         
-        var SITEURL = '{{URL::to('')}}';
             $.ajax({
                 url : 'dokter/' + id + '/edit',
                 type : 'get',
@@ -259,14 +261,20 @@
                     $('#id').val(data.id)
                     $('#nama_dokter').val(data.nama_dokter)
                     $('#bidang_dokter').val(data.bidang_dokter)
+                    // $('#jam_praktek_pagi').val(data.jam_praktek_pagi)
+                    // $('#jam_praktek_malam').val(data.jam_praktek_malam)
                     $('#hari_praktek').select2('val', data.hari_praktek.split(' , '))
-                    $('#jam_praktek').select2('val', data.jam_praktek.split(' , '))
+                    $('#jam_praktek_pagi').select2('val', data.jam_praktek_pagi.split(' , '))
+                    $('#jam_praktek_malam').select2('val', data.jam_praktek_malam.split(' , '))
                     $('#modal-preview').attr('alt', 'No image available');
                     // $('#photo_dokter').val(data.photo_dokter)
+                    // $("#modal-preview").html(`<img src="/public/photo_dokter/${data.photo_dokter}" width="100" class="img-fluid img-thumbnail">`);
+                    $('#modal-preview').attr('alt', 'No image available');
                     if(data.photo_dokter){
                     $('#modal-preview').attr('src', SITEURL +'/public/photo_dokter/'+data.photo_dokter);
                     $('#hidden_image').attr('src', SITEURL +'/public/photo_dokter/'+data.photo_dokter);
                     }
+                    // $('#modal-preview').attr('src','/public/photo_dokter/'+data.photo_dokter);
                     $('#tutup').trigger("reset");
                 }
             })

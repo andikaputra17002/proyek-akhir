@@ -27,12 +27,12 @@ class DokterController extends Controller
         if (request()->ajax()) {
             return datatables()->of(Dokter::all())
                 ->addColumn('aksi', function ($dokter) {
-                    $button = " <button class='edit btn btn-primary  feather icon-edit-1' id='" . $dokter->id . "' > Edit</button>";
-                    $button .= " <button class='hapus btn btn-outline-danger feather icon-trash' id='" . $dokter->id . "' > Hapus</button>";
+                    $button = " <button class='edit btn btn-primary feather icon-edit-1' id='" . $dokter->id . "' >Edit</button>";
+                    $button .= " <button class='hapus btn btn-outline-danger feather icon-trash' id='" . $dokter->id . "' >Hapus</button>";
                     return $button;
                 })
-                
                 ->addColumn('photo_dokter', 'dokter.photo_dokter')
+                // ->addColumn('aksi', 'dokter.aksi')
                 ->rawColumns(['aksi','photo_dokter'])
                 ->addIndexColumn()
                 ->make(true);
@@ -58,42 +58,37 @@ class DokterController extends Controller
      */
     public function store(Request $request)
     {
+        $rule = [
+            'nama_dokter' => 'required',
+            'bidang_dokter' =>'required',
+            'hari_praktek' => 'required',
+            'jam_praktek_pagi' =>'required',
+            'jam_praktek_malam' =>'required',
+            'photo_dokter' => 'image|mimes:jpeg,png,jpg|max:2048',
+        ];
+        $text = [
+            'nama_dokter.required' => 'Kolom nama dokter tidak boleh kosong',
+            'bidang_dokter.required' => 'Kolom bidang dokter tidak boleh kosong',
+            'hari_praktek.required' => 'Kolom hari praktek tidak boleh kosong',
+            'jam_praktek_pagi.required' => 'Kolom jam praktek tidak boleh kosong',
+            'jam_praktek_malam.required' => 'Kolom jam praktek tidak boleh kosong',
+        ];
 
-        // request()->validate([
-        //     'photoProfile' => 'image|mimes:jpeg,png,jpg|max:2048',
-        //     'nama_dokter' => 'required', 'string', 'max:255',
-        //     'bidang_dokter' => 'required', 'string', 'max:255',
-        //     // 'hari' => 'required', 'string', 'max:255',
-        //     // 'jam' => 'required', 'string', 'max:255',
-        // ]);
-        $validator = Validator::make($request->all(),[
-            'nama_dokter' => 'required', 'string', 'max:255',
-            'bidang_dokter' => 'required', 'string', 'max:255',
-         ]
-        //  ,[
-        //      'nama_dokter.required'=>'Product name is required',
-        //      'bidang_dokter.required'=>'Product name is required',
-        //     //  'product_name.string'=>'Product name must be a string',
-        //     //  'product_name.unique'=>'This product name is already taken',
-        //     //  'product_image.required'=>'Product image is required',
-        //     //  'product_image.image'=>'Product file must be an image',
-        //  ]
-        );
-
-        if($validator->fails())
-        {
-            return response()->json([
-                'status'=>400,
-                'errors'=>$validator->messages()
-            ]);
-        }else {
+        $validasi = Validator::make($request->all(), $rule, $text);
+        if ($validasi->fails()) {
+            return response()->json(['status' => 0, 'text' => $validasi->errors()->first()], 422);
+        }
+   
             $datas = new Dokter();
             $Id = $request->id;
             $data =[
                 'nama_dokter' => $request->nama_dokter,
                 'bidang_dokter' => $request->bidang_dokter,
+                // 'jam_praktek_pagi' => $request->jam_praktek_pagi,
+                // 'jam_praktek_malam' => $request->jam_praktek_malam,
                 'hari_praktek' => implode(' , ' , $request->hari_praktek),
-                'jam_praktek' =>implode(' , ', $request->jam_praktek),
+                'jam_praktek_pagi' =>implode(' , ', $request->jam_praktek_pagi),
+                'jam_praktek_malam' =>implode(' , ', $request->jam_praktek_malam),
     
             ];
             if ($files = $request->file('photo_dokter')) {
@@ -107,14 +102,17 @@ class DokterController extends Controller
                 $data['photo_dokter'] = "$profileImage";
             }
              
-            $datas = Dokter::updateOrCreate(['id' => $Id], $data);  
+            $datas = Dokter::updateOrCreate(['id' => $Id], $data); 
+            if ($datas) {
+                return response()->json(['status' => 'Data Berhasil Disimpan', 200]);
+            } else {
+                return response()->json(['text' => 'Data Gagal Disimpan', 422]);
+            }  
             // $data = $data->save();
-            return response()->json([
-                    'status' => 200,$datas
-                    // 'code'=>1,$datas
-            ]);
-         }
-
+            // return response()->json([
+            //         'status' => 200,$datas
+            //         // 'code'=>1,$datas
+            // ]);
         
     }
 

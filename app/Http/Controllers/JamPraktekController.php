@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use datatables;
 use App\Models\JamPraktek;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class JamPraktekController extends Controller
 {
@@ -26,6 +27,7 @@ class JamPraktekController extends Controller
                     return $button;
                 })
                 ->rawColumns(['aksi'])
+                ->addIndexColumn()
                 ->make(true);
         }
         return view('jampraktek.index');
@@ -50,6 +52,18 @@ class JamPraktekController extends Controller
     public function store(Request $request)
     {
 
+        $rule = [
+            'jam_praktek' => 'required'
+        ];
+        $text = [
+            'jam_praktek.required' => 'Kolom jam praktek dokter tidak boleh kosong'
+        ];
+
+        $validasi = Validator::make($request->all(), $rule, $text);
+        if ($validasi->fails()) {
+            return response()->json(['status' => 0, 'text' => $validasi->errors()->first()], 422);
+        }
+
         $datas = new JamPraktek();
         $Id = $request->id;
         $data =[
@@ -57,9 +71,15 @@ class JamPraktekController extends Controller
         ];
         // $data = $data->save();
         $datas = JamPraktek::updateOrCreate(['id' => $Id], $data);
-        return response()->json([
-            	'status' => 200, $datas
-            ]);
+
+        if ($datas) {
+            return response()->json(['status' => 'Data Berhasil Disimpan', 200]);
+        } else {
+            return response()->json(['text' => 'Data Gagal Disimpan', 422]);
+        }
+        // return response()->json([
+        //     	'status' => 200, $datas
+        //     ]);
     }
 
     /**

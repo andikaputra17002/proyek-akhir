@@ -53,25 +53,28 @@
                                     @csrf
                                     <div class="col-sm-12 data-field-col">
                                         <label for="data-name">Name</label>
-                                        <input type="text" class="form-control" id="name" name="name">
-                                        <input type="hidden" id="id" name="id">
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama Petugas>
+                                        <input type=" hidden" id="id" name="id">
                                     </div>
                                     <div class="col-sm-12 data-field-col">
                                         <label for="data-name">Email</label>
-                                        <input type="email" class="form-control" name="email" id="email">
+                                        <input type="email" class="form-control" name="email" id="email"
+                                            placeholder="Masukkan Email">
                                     </div>
                                     <div class="col-sm-12 data-field-col">
                                         <label for="data-name">Password</label>
-                                        <input type="password" class="form-control" name="password" id="password">
+                                        <input type="password" class="form-control" name="password" id="password"
+                                            placeholder="Masukkan Password">
                                     </div>
                                     <div class="col-sm-12 data-field-col">
                                         <label for="data-name">Password Confirmation</label>
                                         <input type="password" class="form-control" name="password_confirmation"
-                                            id="password_confirmation">
+                                            placeholder="Masukkan Confirmation Password" id="password_confirmation">
                                     </div>
                                     <div class="col-sm-12 data-field-col">
                                         <label for="data-name">Alamat</label>
-                                        <input type="text" class="form-control" name="alamat" id="alamat">
+                                        <input type="text" class="form-control" name="alamat" id="alamat"
+                                            placeholder="Masukkan Alamat">
                                     </div>
                                     <div class="col-sm-12 data-field-col">
                                         <label for="data-category">Roles</label>
@@ -81,7 +84,8 @@
                                     </div>
                                     <div class="col-sm-12 data-field-col">
                                         <label for="data-status">Jenis Kelamin</label>
-                                        <select class="form-control" id="jenis_kelamin" name="jenis_kelamin">
+                                        <select class="form-control" id="jenis_kelamin" name="jenis_kelamin"
+                                            placeholder="Masukkan Jenis Kelamin">
                                             <option value="">Pilih Jenis Kelamin</option>
                                             <option value="pria">Pria</option>
                                             <option value="wanita">Wanita</option>
@@ -89,7 +93,8 @@
                                     </div>
                                     <div class="col-sm-12 data-field-col">
                                         <label for="data-price">Nomer Telepon</label>
-                                        <input type="text" class="form-control" id="no_tlp" name="no_tlp">
+                                        <input type="text" class="form-control" id="no_tlp" name="no_tlp"
+                                            placeholder="Masukkan Nomor Telepon">
                                     </div>
                                     <div class="col-sm-12 data-field-col img-holder ">
                                         <label for="data-price">Upload Image</label>
@@ -98,7 +103,7 @@
                                         <input type="hidden" name="hidden_image" id="hidden_image">
                                     </div>
                                     <img id="modal-preview" src="https://via.placeholder.com/150" alt="Preview"
-                                        class="form-group hidden mt-1" width="100" height="100">
+                                        class="form-group mt-1 ml-2" width="100" height="100">
                                     <div class="modal-footer">
                                         <div class="add-data-footer d-flex justify-content-around pl-5 mt-2">
                                             <div class="add-data-btn px-1">
@@ -123,7 +128,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js'></script>
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.11.5/datatables.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
     $(document).ready(function () {
             $.ajaxSetup({
@@ -135,19 +141,20 @@
 
     // Data Table
         $('#datatable2').DataTable({
-            serverside : true,
+            serverSide : true,
             responsive : true,
+            processing: true,
             ajax : {
                 url : "{{route('user.index')}}"
             },
             columns:[
-                    {
-                        "data" :null, "sortable": false,
-                        render : function (data, type, row, meta, col) {
-                            return meta.row + meta.settings._iDisplayStart + 1 
-                        }
-                    },
-                    // {data: 'id', name: 'id', 'visible': false},
+                    // {
+                    //     "data" :null, "sortable": false,
+                    //     render : function (data, type, row, meta,) {
+                    //         return meta.row + meta.settings._iDisplayStart + 1 
+                    //     }
+                    // },
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     {data: 'photoProfile', name: 'photoProfile'},
                     {data: 'name', name: 'name'},
                     {data: 'email', name: 'email'},
@@ -155,7 +162,7 @@
                     {data: 'aksi', name: 'aksi'}
                 ],
                 
-                order: [[0, 'desc']]
+                order: [[0, 'asc']]
         });
 
     // Tambah Data
@@ -173,30 +180,34 @@
                 processData: false,
                 success: function(response) {
                     // console.log(response);
-                    if (response.status == 200) {
                         Swal.fire(
                             'Added!',
                             'Petugas Added Successfully!',
                             'success'
-                            )}
+                            )
                     // $('#tutup').click()
                     $('#formpetugas')[0].reset()
                     $('#formpetugas').trigger("reset"); //form reset
                     $('#tutup').trigger("reset"); //form reset
                     $('#exampleModal').modal('hide'); //modal hide
                     $('#datatable2').DataTable().ajax.reload()
-                }    
+                },
+                error : function (xhr) {
+                    // console.log('gagal');
+                    toastr.error(xhr.responseJSON.text, "GAGAL")
+                }   
+                
             })
         });
-
-    $(document).on('click', '.edit', function (e) {
+        
+        var SITEURL = '{{URL::to('')}}';
+        $(document).on('click', '.edit', function (e) {
         e.preventDefault(); 
         $('#exampleModal').modal('show')
         let id = $(this).attr('id')
         $('#modal-judul').html("Edit Data Petugas"); // Judul
         $('#tutup').trigger("reset");
         
-        var SITEURL = '{{URL::to('')}}';
             $.ajax({
                 url : 'user/' + id + '/edit',
                 type : 'get',
@@ -215,7 +226,6 @@
                     $('#roles').val(data.roles)
                     $('#jenis_kelamin').val(data.jenis_kelamin)
                     $('#no_tlp').val(data.no_tlp)
-                    // $("#photoProfile").html(`<img src="/public/files/${data.photoProfile}" width="100" class="img-fluid img-thumbnail">`);
                     $('#modal-preview').attr('alt', 'No image available');
                     if(data.photoProfile){
                     $('#modal-preview').attr('src', SITEURL +'/public/files/'+data.photoProfile);
@@ -225,8 +235,12 @@
                 }
             })
         });
-
-    // Hapus
+        
+        // Hapus
+        // if(data.photoProfile){
+        // $('#modal-preview').attr('src', SITEURL +'/public/files/'+data.photoProfile);
+        // $('#hidden_image').attr('src', SITEURL +'/public/files/'+data.photoProfile);
+        // }
     $(document).on('click', '.hapus', function () {
             id = $(this).attr('id');
             Swal.fire({
@@ -271,7 +285,7 @@
         reader.readAsDataURL(input.files[0]);
         $('#modal-preview').removeClass('hidden');
             $('#start').hide();
-            }
+        }
         }
 </script>
 

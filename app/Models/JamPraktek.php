@@ -9,9 +9,9 @@ class JamPraktek extends Model
 {
     use HasFactory;
 
-    // protected $fillable = [
-    //     'jam_praktek'
-    // ];
+    protected $fillable = [
+        'jam_praktek'
+    ];
     protected $table = "jam_prakteks";
-    protected $guarded = [];
+    // protected $guarded = [];
 }

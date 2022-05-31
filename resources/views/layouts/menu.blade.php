@@ -26,16 +26,8 @@
             <li class=" nav-item"><a href="{{ route('user.index') }}"><i class="feather icon-users"></i><span
                         class="menu-title" data-i18n="Chat">Data Petugas</span></a>
             </li>
-            <li class=" nav-item"><a href="#"><i class="feather icon-file-text"></i><span class="menu-title"
-                        data-i18n="Ecommerce">Data Pendaftaran</span></a>
-                <ul class="menu-content">
-                    <li><a href="{{ route('doktersurya.index') }}"><i class="feather icon-circle"></i><span
-                                class="menu-item" data-i18n="Shop">Dr.Suryadinata</span></a>
-                    </li>
-                    <li><a href="{{ route('dokterrohmah.index') }}"><i class="feather icon-circle"></i><span
-                                class="menu-item" data-i18n="Details">Dr. Rohmah El Yunusiyah</span></a>
-                    </li>
-                </ul>
+            <li class=" nav-item"><a href="{{ route('pendaftaran.index') }}"><i class="feather icon-file-text"></i><span
+                        class="menu-title" data-i18n="Chat">Data Pendaftaran</span></a>
             </li>
             <li class=" nav-item"><a href="#"><i class="fa fa-user-md"></i><span class="menu-title"
                         data-i18n="User">Data Dokter</span></a>

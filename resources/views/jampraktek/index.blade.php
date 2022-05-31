@@ -51,9 +51,10 @@
                                     <div class="col-sm-12 data-field-col">
                                         <label for="data-name">Jam Praktek Dokter</label>
                                         <input type="text" class="form-control" id="jam_praktek" name="jam_praktek"
-                                            required>
+                                            placeholder="Masukkan Jam Praktek Dokter">
                                         <input type="hidden" id="id" name="id">
                                     </div>
+
                                 </div>
                                 <div class="modal-footer">
                                     <div class="add-data-footer d-flex justify-content-around px-3 mt-2">
@@ -75,8 +76,10 @@
 </div>
 @push('js')
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11.4.16/dist/sweetalert2.all.min.jss'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js'></script>
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.11.5/datatables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
     $(document).ready(function () {
             $.ajaxSetup({
@@ -88,20 +91,22 @@
 
     $('#datatablejam').DataTable({
            
-           serverside : true,
-           responsive : true,
+            serverSide : true,
+            responsive : true,
+            processing: true,
            ajax : {
                url : "{{route('jampraktek.index')}}"
            },
            columns:[
-                   {
-                       "data" :null, "sortable": false,
-                       render : function (data, type, row, meta) {
-                           return meta.row + meta.settings._iDisplayStart + 1
-                       }
-                   },
-                    {data: 'jam_praktek', name: 'jam_praktek'},
-                    {data: 'aksi', name: 'aksi'}
+                //    {
+                //        "data" :null, "sortable": false,
+                //        render : function (data, type, row, meta) {
+                //            return meta.row + meta.settings._iDisplayStart + 1
+                //        }
+                //    },
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                {data: 'jam_praktek', name: 'jam_praktek'},
+                {data: 'aksi', name: 'aksi'}
                ]
     });
 
@@ -119,20 +124,23 @@
                 dataType:'json',
                 processData: false,
                 success: function(response) {
-                    // console.log(response);
-                    if (response.status == 200) {
-                        Swal.fire(
+                    Swal.fire(
                             'Added!',
                             'Jam Praktek Dokter Added Successfully!',
                             'success'
-                            )}
+                            )
+                    // console.log(response);
                     // $('#tutup').click()
                     $('#formjam')[0].reset()
                     $('#formjam').trigger("reset"); //form reset
                     $('#tutup').trigger("reset"); //form reset
                     $('#exampleModal').modal('hide'); //modal hide
                     $('#datatablejam').DataTable().ajax.reload()
-                }    
+                },
+                error : function (xhr) {
+                    // console.log('gagal');
+                    toastr.error(xhr.responseJSON.text, "GAGAL")
+                }   
             })
         });
 
